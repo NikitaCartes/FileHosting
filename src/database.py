@@ -3,7 +3,7 @@ from typing import List
 
 from pymongo import ReturnDocument, MongoClient
 
-from StoredFile import StoredFile, Name
+from storedFile import StoredFile, Name
 
 from settings import DATABASE_URL
 
