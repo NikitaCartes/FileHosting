@@ -72,9 +72,13 @@ class SimpleHTTPRequestHandlerWithUpload(http.server.SimpleHTTPRequestHandler):
         '.xz': 'application/x-xz',
     }
 
+    # ToDo: Добавить чтоб реагировал только на files.
+    # ToDo: Сделать красивую страницу
+    # ToDo: Сделать футер с донатом
+    # ToDo: Сделать main page
+    # ToDo: асинхронная работа с БД
+
     def do_GET(self):
-        #print(self.path)
-        print(str(time_ns()))
         """Serve a GET request."""
         f = self.send_head()
         if f:
@@ -84,7 +88,6 @@ class SimpleHTTPRequestHandlerWithUpload(http.server.SimpleHTTPRequestHandler):
                 f.close()
 
     def send_head(self):
-        print(str(time_ns()))
         original_filename = self.translate_path(self.path)
 
         if os.path.isdir(original_filename):
@@ -117,7 +120,6 @@ class SimpleHTTPRequestHandlerWithUpload(http.server.SimpleHTTPRequestHandler):
             self.send_error(HTTPStatus.NOT_FOUND, "File not found")
             return None
 
-        print(str(time_ns()))
         f = None
         try:
             f = open(path, 'rb')
@@ -158,7 +160,6 @@ class SimpleHTTPRequestHandlerWithUpload(http.server.SimpleHTTPRequestHandler):
             self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
             self.end_headers()
 
-            print(str(time_ns()))
             return f
         except:
             f.close()
@@ -166,7 +167,6 @@ class SimpleHTTPRequestHandlerWithUpload(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
 
-        print(str(time_ns()))
         """Serve a POST request."""
         # upload file
         result, message = self.handle_upload()
@@ -198,7 +198,6 @@ class SimpleHTTPRequestHandlerWithUpload(http.server.SimpleHTTPRequestHandler):
         self.send_header('Content-Length', str(len(encoded)))
         self.end_headers()
 
-        print(str(time_ns()))
         if f:
             self.copyfile(f, self.wfile)
             f.close()
@@ -230,7 +229,6 @@ class SimpleHTTPRequestHandlerWithUpload(http.server.SimpleHTTPRequestHandler):
 
         result = {}
 
-        print(str(time_ns()))
         # save file(s)
         for i in range(len(filenames)):
             # remove file headers
@@ -241,7 +239,6 @@ class SimpleHTTPRequestHandlerWithUpload(http.server.SimpleHTTPRequestHandler):
 
             hash_id = urlsafe_b64encode(sha3_384(file_data).digest()).decode()
 
-            print(str(time_ns()))
             if __db__.is_exist(hash_id):
                 stored_file = __db__.find_file(hash_id)
                 stored_file.add_name(filenames[i])
@@ -255,7 +252,6 @@ class SimpleHTTPRequestHandlerWithUpload(http.server.SimpleHTTPRequestHandler):
                                                                           uploads_number=1)])
                 __db__.insert_file(stored_file)
 
-            print(str(time_ns()))
             # write to file
             try:
                 with open(f'{args.directory}/{hash_id}', 'wb') as file:
@@ -265,7 +261,6 @@ class SimpleHTTPRequestHandlerWithUpload(http.server.SimpleHTTPRequestHandler):
 
             result[sanitize_filename(filenames[i])] = hash_id
 
-            print(str(time_ns()))
         return True, result
 
     def list_directory(self, path):
