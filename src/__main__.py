@@ -181,7 +181,7 @@ class SimpleHTTPRequestHandlerWithUpload(http.server.SimpleHTTPRequestHandler):
         if result:
             r.append('<b><font color="green">File(s) successfully uploaded</font></b>: ')
             for key, value in message.items():
-                r.append(f'<a href="https://localhost:8000/{value}/{key}">{key}</a><br />')
+                r.append(f'<a href="https://files.nikitacartes.xyz/{value}/{key}">{key}</a><br />')
         else:
             r.append('<b><font color="red">Failed to upload file(s)</font></b>: ')
             r.append(message)
