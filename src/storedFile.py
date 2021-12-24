@@ -47,11 +47,18 @@ class StoredFile:
                           file_document['is_short_link'],
                           file_document['original_hash'])
 
-    def add_name(self, filename):
-        name, exist, i = _first((x for x in self.names if x.name == filename), Name(filename, uploads_number=1))
+    def add_name(self, filename, upload=False, download=False):
+        name, exist, i = _first((x for x in self.names if x.name == filename), Name(filename))
         if exist:
-            self.names[i].uploads_number += 1
+            if upload:
+                self.names[i].uploads_number += 1
+            if download:
+                self.names[i].downloads_number += 1
         else:
+            if upload:
+                name.uploads_number = 1
+            if download:
+                name.downloads_number = 1
             self.names.append(name)
 
 
